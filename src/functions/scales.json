@@ -1,0 +1,41 @@
+{
+  "scales": [
+    {
+      "id": 1,
+      "name": "Natural Major",
+      "intervals": [0, 2, 4, 5, 7, 9, 11],
+      "mode": "Major"
+    },
+    {
+      "id": 2,
+      "name": "Natural Minor",
+      "intervals": [0, 2, 3, 5, 7, 8, 10],
+      "mode": "Minor"
+    },
+    {
+      "id": 3,
+      "name": "Harmonic Major",
+      "intervals": [0, 2, 3, 5, 8, 9, 11],
+      "mode": "Major"
+    },
+    {
+      "id": 4,
+      "name": "Harmonic Minor",
+      "intervals": [0, 2, 3, 5, 7, 8, 11],
+      "mode": "Minor"
+    },
+    {
+      "id": 5,
+      "name": "Melodic Minor",
+      "intervals": [0, 2, 3, 5, 7, 9, 11],
+      "mode": "Minor"
+    },
+    {
+      "id": 6,
+      "name": "Dorian Minor",
+      "intervals": [0, 2, 3, 5, 7, 9, 10],
+      "mode": "Minor",
+      "description": "Jazz minor mode"
+    }
+  ]
+}

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import * as Tone from "tone";
+import scalesData from "./scales.json";
 
 const polySynth = new Tone.PolySynth().toDestination();
-const majorScaleIntervals = [0, 2, 4, 5, 7, 9, 11]; // 全音音程
 function PianoKeyboard() {
   // 常見的鋼琴音階順序（12 半音）
 
@@ -20,8 +20,12 @@ function PianoKeyboard() {
     "Bb",
     "B",
   ];
-  const [rootNote, setRootNote] = useState("D");
-  const yellowNotes = majorScaleIntervals.map((interval) => {
+  const [rootNote, setRootNote] = useState("C");
+  const [scalesName, setScalesName] = useState(scalesData.scales[0].name);
+  const selectedScale =
+    scalesData.scales.find((scale) => scale.name === scalesName) ||
+    scalesData.scales[0];
+  const yellowNotes = selectedScale.intervals.map((interval) => {
     const fullNote = Tone.Frequency(rootNote + "4")
       .transpose(interval)
       .toNote();
@@ -68,20 +72,34 @@ function PianoKeyboard() {
         >
           {[
             "C",
+            "C#",
             "Db",
             "D",
             "Eb",
             "E",
             "F",
+            "F#",
             "Gb",
             "G",
             "Ab",
             "A",
             "Bb",
             "B",
+            "Cb",
           ].map((note) => (
             <option key={note} value={note}>
-              {note} Major
+              {note}
+            </option>
+          ))}
+        </select>
+        <select
+          value={scalesName}
+          onChange={(e) => setScalesName(e.target.value)}
+          className="mb-4 p-2 border rounded bg-yellow-400 text-purple-800"
+        >
+          {scalesData.scales.map((scale) => (
+            <option key={scale.id} value={scale.name}>
+              {scale.name}
             </option>
           ))}
         </select>
