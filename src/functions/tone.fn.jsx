@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import * as Tone from "tone";
 import scalesData from "./scales.json";
 
@@ -25,6 +25,80 @@ function PianoKeyboard() {
   const selectedScale =
     scalesData.scales.find((scale) => scale.name === scalesName) ||
     scalesData.scales[0];
+
+  const majorRootNotes = [
+    "C",
+    "C#",
+    "Db",
+    "D",
+    "Eb",
+    "E",
+    "F",
+    "F#",
+    "Gb",
+    "G",
+    "Ab",
+    "A",
+    "Bb",
+    "B",
+    "Cb",
+  ];
+
+  const minorRootNotes = [
+    "A",
+    "A#",
+    "Bb",
+    "B",
+    "C",
+    "C#",
+    "D",
+    "D#",
+    "Eb",
+    "E",
+    "F",
+    "F#",
+    "G",
+    "G#",
+    "Ab",
+  ];
+
+  // 對應表（當前 note 無法在對應 mode 下使用時，自動轉換）
+  const rootNoteFallbacks = {
+    // 大調轉小調時
+    Gb: "F#",
+    Cb: "B",
+    // 小調轉大調時
+    "D#": "Eb",
+    "G#": "Ab",
+    "A#": "Bb",
+  };
+
+  useEffect(() => {
+    const newSelectedScale = scalesData.scales.find(
+      (scale) => scale.name === scalesName
+    );
+    const mode = newSelectedScale?.mode || "Major";
+
+    const isValid =
+      mode === "Major"
+        ? majorRootNotes.includes(rootNote)
+        : minorRootNotes.includes(rootNote);
+
+    if (!isValid) {
+      const fallback = rootNoteFallbacks[rootNote];
+      if (fallback) {
+        setRootNote(fallback);
+      } else {
+        setRootNote(mode === "Major" ? "C" : "A");
+      }
+    }
+  }, [scalesName]);
+
+  const selectedMode = selectedScale.mode; // "Major" or "Minor"
+
+  const rootNoteOptions =
+    selectedMode === "Minor" ? minorRootNotes : majorRootNotes; //Identify the scale is maj or min
+
   const yellowNotes = selectedScale.intervals.map((interval) => {
     const fullNote = Tone.Frequency(rootNote + "4")
       .transpose(interval)
@@ -70,23 +144,7 @@ function PianoKeyboard() {
           onChange={(e) => setRootNote(e.target.value)}
           className="mb-4 p-2 border rounded bg-yellow-400 text-purple-800"
         >
-          {[
-            "C",
-            "C#",
-            "Db",
-            "D",
-            "Eb",
-            "E",
-            "F",
-            "F#",
-            "Gb",
-            "G",
-            "Ab",
-            "A",
-            "Bb",
-            "B",
-            "Cb",
-          ].map((note) => (
+          {rootNoteOptions.map((note) => (
             <option key={note} value={note}>
               {note}
             </option>
