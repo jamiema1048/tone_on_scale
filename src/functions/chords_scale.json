@@ -1,0 +1,124 @@
+{
+  "scales": [
+    {
+      "id": 1,
+      "name": "Natural Major",
+      "intervals": [0, 2, 4, 5, 7, 9, 11],
+      "mode": "Major",
+      "triadChords": [
+        "Major",
+        "Minor",
+        "Minor",
+        "Major",
+        "Major",
+        "Minor",
+        "Diminished"
+      ],
+      "seventhChords": [
+        "Major7",
+        "Minor7",
+        "Minor7",
+        "Major7",
+        "Dominant7",
+        "Minor7",
+        "HalfDiminished7"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Natural Minor",
+      "intervals": [0, 2, 3, 5, 7, 8, 10],
+      "mode": "Minor",
+      "triadChords": [
+        "Minor",
+        "Diminished",
+        "Major",
+        "Minor",
+        "Minor",
+        "Major",
+        "Major"
+      ],
+      "seventhChords": [
+        "Minor7",
+        "HalfDiminished7",
+        "Major7",
+        "Minor7",
+        "Minor7",
+        "Major7",
+        "Dominant7"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Harmonic Major",
+      "intervals": [0, 2, 4, 5, 8, 9, 11],
+      "mode": "Major",
+      "triadChords": [
+        "Augmented",
+        "Minor",
+        "Major",
+        "Major",
+        "Diminished",
+        "Minor",
+        "Diminished"
+      ],
+      "seventhChords": [
+        "AugmentedMajor7",
+        "Minor7",
+        "Dominant7",
+        "Major7",
+        "Diminished7",
+        "MinorMajor7",
+        "HalfDiminished7"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Harmonic Minor",
+      "intervals": [0, 2, 3, 5, 7, 8, 11],
+      "mode": "Minor",
+      "triadChords": [
+        "Minor",
+        "Diminished",
+        "Augmented",
+        "Minor",
+        "Major",
+        "Major",
+        "Diminished"
+      ],
+      "seventhChords": [
+        "MinorMajor7",
+        "HalfDiminished7",
+        "AugmentedMajor7",
+        "Minor7",
+        "Dominant7",
+        "Major7",
+        "Diminished7"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Melodic Minor",
+      "intervals": [0, 2, 3, 5, 7, 9, 11],
+      "mode": "Minor",
+      "triadChords": [
+        "Minor",
+        "Minor",
+        "Augmented",
+        "Major",
+        "Major",
+        "Diminished",
+        "Diminished"
+      ],
+      "seventhChords": [
+        "MinorMajor7",
+        "Minor7",
+        "AugmentedMajor7",
+        "Dominant7",
+        "Dominant7",
+        "HalfDiminished7",
+        "HalfDiminished7"
+      ]
+    }
+  ]
+}

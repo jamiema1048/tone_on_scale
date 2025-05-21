@@ -3,7 +3,7 @@ import * as Tone from "tone";
 import scalesData from "./scales.json";
 
 const polySynth = new Tone.PolySynth().toDestination();
-function PianoKeyboard() {
+const PianoKeyboard = () => {
   // 常見的鋼琴音階順序（12 半音）
 
   const noteNames = [
@@ -71,6 +71,26 @@ function PianoKeyboard() {
     "D#": "Eb",
     "G#": "Ab",
     "A#": "Bb",
+  };
+
+  const enharmonicLabels = {
+    C: "C / B#",
+    "C#": "C# / Db",
+    Db: "C# / Db",
+    D: "D",
+    "D#": "D# / Eb",
+    Eb: "D# / Eb",
+    E: "E / Fb",
+    F: "F / E#",
+    "F#": "F# / Gb",
+    Gb: "F# / Gb",
+    G: "G",
+    "G#": "G# / Ab",
+    Ab: "G# / Ab",
+    A: "A",
+    "A#": "A# / Bb",
+    Bb: "A# / Bb",
+    B: "B / Cb",
   };
 
   useEffect(() => {
@@ -196,7 +216,7 @@ function PianoKeyboard() {
             }
             ${activeNotes.includes(note) ? "active" : ""}`}
               >
-                {pitch}
+                {enharmonicLabels[pitch] || pitch}
               </button>
             </div>
           );
@@ -204,5 +224,5 @@ function PianoKeyboard() {
       </div>
     </>
   );
-}
+};
 export default PianoKeyboard;
