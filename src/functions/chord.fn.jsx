@@ -123,6 +123,54 @@ const PianoChord = () => {
     return enharmonicMap[note] || note;
   }
 
+  function generateLetterNames(rootNote) {
+    const letterOrder = ["C", "D", "E", "F", "G", "A", "B"];
+    const rootLetter = rootNote[0].toUpperCase();
+    const startIndex = letterOrder.indexOf(rootLetter);
+
+    const reordered = [];
+    for (let i = 0; i < 7; i++) {
+      reordered.push(letterOrder[(startIndex + i) % 7]);
+    }
+
+    return reordered;
+  }
+
+  function getEnharmonicName(midi, targetLetter) {
+    const enharmonics = Tone.Frequency(midi, "midi")
+      .toNote()
+      .replace(/[0-9]/g, "");
+
+    // Tone.js 不直接提供 enharmonic 清單，我們簡單處理常見情況：
+    const altNames = {
+      "C#": "Db",
+      Db: "C#",
+      "D#": "Eb",
+      Eb: "D#",
+      E: "Fb",
+      Fb: "E",
+      "E#": "F",
+      F: "E#",
+      "F#": "Gb",
+      Gb: "F#",
+      "G#": "Ab",
+      Ab: "G#",
+      "A#": "Bb",
+      Bb: "A#",
+      "B#": "C",
+      C: "B#",
+      B: "Cb",
+      Cb: "B",
+    };
+
+    if (enharmonics[0] === targetLetter) return enharmonics;
+    const alt = altNames[enharmonics];
+    if (alt && alt[0] === targetLetter) return alt;
+
+    // fallback
+    return enharmonics;
+  }
+
   function generateChordsInScale(root, scale) {
     if (
       !scale ||
@@ -133,25 +181,31 @@ const PianoChord = () => {
       console.error("Invalid scale data:", scale);
       return [];
     }
-    const useSharps = prefersSharps(root);
-    const baseMidi = Tone.Frequency(root + "3").toMidi();
+
+    //root=="Cb"? root+ "4":root+ "3"
+    const baseMidi = Tone.Frequency(
+      root == "Cb" ? root + "4" : root + "3"
+    ).toMidi();
     const chords = [];
 
+    // 🔸 Step 1: 產生音名字母順序
+    const letterNames = generateLetterNames(root);
+
+    // 🔸 Step 2: 主迴圈
     for (let i = 0; i < scale.intervals.length; i++) {
       const rootInterval = scale.intervals[i];
       const midi = (baseMidi + rootInterval) % 128;
 
-      let chordRoot = Tone.Frequency(midi, "midi")
-        .toNote()
-        .replace(/[0-9]/g, "");
-      if (!useSharps) chordRoot = preferFlat(chordRoot);
+      // 正確取得音名（enharmonic-aware）
+      const targetLetter = letterNames[i % 7];
+      const chordRoot = getEnharmonicName(midi, targetLetter);
 
       // --- TRIAD ---
       const triadType = scale.triadChords[i];
       const triadFormula = traidChordFormulas[triadType];
 
       const triadNotes = triadFormula.map((interval) =>
-        Tone.Frequency(root + "3")
+        Tone.Frequency(root == "Cb" ? root + "4" : root + "3")
           .transpose(rootInterval + interval)
           .toNote()
       );
@@ -175,7 +229,7 @@ const PianoChord = () => {
       const seventhFormula = seventhChordFormulas[seventhType];
 
       const seventhNotes = seventhFormula.map((interval) =>
-        Tone.Frequency(root + "3")
+        Tone.Frequency(root == "Cb" ? root + "4" : root + "3")
           .transpose(rootInterval + interval)
           .toNote()
       );
@@ -305,7 +359,9 @@ const PianoChord = () => {
       <div className="relative w-full h-48 flex justify-center border border-solid border-red-400">
         {notes.map((note) => {
           const pitch = note.slice(0, -1); // "Gb"
-          const standardized = Tone.Frequency(pitch + "3")
+          const standardized = Tone.Frequency(
+            pitch == "Cb" ? pitch + "4" : pitch + "3"
+          )
             .toNote()
             .replace(/[0-9]/g, ""); // "F#"
           const isYellow = yellowNotes.includes(standardized);
@@ -360,7 +416,7 @@ const PianoChord = () => {
                 onMouseLeave={() => chord.notes.forEach(stopNote)}
                 onTouchStart={() => chord.notes.forEach(startNote)}
                 onTouchEnd={() => chord.notes.forEach(stopNote)}
-                className="px-3 py-2 bg-purple-300 text-yellow-900 rounded shadow hover:bg-purple-400"
+                className="chord-btn px-3 py-2 rounded shadow hover:bg-purple-400"
               >
                 {chord.name}
               </button>
@@ -385,7 +441,7 @@ const PianoChord = () => {
                 onMouseLeave={() => chord.notes.forEach(stopNote)}
                 onTouchStart={() => chord.notes.forEach(startNote)}
                 onTouchEnd={() => chord.notes.forEach(stopNote)}
-                className="px-3 py-2 bg-purple-300 text-yellow-900 rounded shadow hover:bg-purple-400"
+                className="chord-btn px-3 py-2 rounded shadow hover:bg-purple-400"
               >
                 {chord.name}
               </button>
