@@ -1,9 +1,11 @@
 // MusicStaff.jsx
 import { useEffect, useRef } from "react";
 import Vex from "vexflow";
+import { spellStaffNote } from "./staffNotes";
 
-export default function MusicStaff({ note }) {
+export default function MusicStaff({ note, rootNote, scale }) {
   const containerRef = useRef(null);
+  const staffNote = spellStaffNote(note, rootNote, scale);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -25,27 +27,23 @@ export default function MusicStaff({ note }) {
     const stave = new VF.Stave(10, 20, 330);
     stave.addClef("treble").setContext(context).draw();
 
-    if (note) {
-      // C4 → c/4
-      const vfKey = note.toLowerCase().replace(/(\d)/, "/$1");
-
+    if (staffNote) {
+      const [, letter, accidental, octave] = staffNote.match(/^([A-G])([#b]*)(-?\d+)$/);
+      const vfKey = `${letter.toLowerCase()}${accidental}/${octave}`;
       const staveNote = new VF.StaveNote({
         keys: [vfKey],
         duration: "q",
         clef: "treble",
       });
 
-      const pitch = note.slice(0, -1);
-      if (pitch.includes("#")) {
-        staveNote.addModifier(0, new VF.Accidental("#"));
-      } else if (pitch.includes("b")) {
-        staveNote.addModifier(0, new VF.Accidental("b"));
+      if (accidental) {
+        staveNote.addModifier(0, new VF.Accidental(accidental));
       }
 
       // ✨ 讓 VexFlow 自動排版（避免 UI 崩潰）
       VF.Formatter.FormatAndDraw(context, stave, [staveNote]);
     }
-  }, [note]);
+  }, [staffNote]);
 
   return <div ref={containerRef}></div>;
 }

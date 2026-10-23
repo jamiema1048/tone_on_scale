@@ -221,9 +221,8 @@ export default function PianoKeyboard() {
 
       {/* 五線譜 */}
       <StaffPanel>
-        <MusicStaff note={currentNote} />
+        <MusicStaff note={currentNote} rootNote={rootNote} scale={selectedScale} />
       </StaffPanel>
     </>
   );
 }
-

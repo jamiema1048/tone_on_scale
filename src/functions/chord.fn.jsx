@@ -125,19 +125,19 @@ const PianoChord = () => {
     AugmentedMajor7: [0, 4, 8, 11],
   };
 
-  function prefersSharps(note) {
-    return note.includes("#");
-  }
-  function preferFlat(note) {
-    const enharmonicMap = {
-      "C#": "Db",
-      "D#": "Eb",
-      "F#": "Gb",
-      "G#": "Ab",
-      "A#": "Bb",
-    };
-    return enharmonicMap[note] || note;
-  }
+  // function prefersSharps(note) {
+  //   return note.includes("#");
+  // }
+  // function preferFlat(note) {
+  //   const enharmonicMap = {
+  //     "C#": "Db",
+  //     "D#": "Eb",
+  //     "F#": "Gb",
+  //     "G#": "Ab",
+  //     "A#": "Bb",
+  //   };
+  //   return enharmonicMap[note] || note;
+  // }
 
   function generateLetterNames(rootNote) {
     const letterOrder = ["C", "D", "E", "F", "G", "A", "B"];
@@ -200,7 +200,7 @@ const PianoChord = () => {
 
     //root=="Cb"? root+ "4":root+ "3"
     const baseMidi = Tone.Frequency(
-      root == "Cb" ? root + "4" : root + "3"
+      root == "Cb" ? root + "4" : root + "3",
     ).toMidi();
     const chords = [];
 
@@ -223,7 +223,7 @@ const PianoChord = () => {
       const triadNotes = triadFormula.map((interval) =>
         Tone.Frequency(root == "Cb" ? root + "4" : root + "3")
           .transpose(rootInterval + interval)
-          .toNote()
+          .toNote(),
       );
 
       const triadNameSuffix =
@@ -247,7 +247,7 @@ const PianoChord = () => {
       const seventhNotes = seventhFormula.map((interval) =>
         Tone.Frequency(root == "Cb" ? root + "4" : root + "3")
           .transpose(rootInterval + interval)
-          .toNote()
+          .toNote(),
       );
 
       const seventhNameSuffix =
@@ -278,7 +278,7 @@ const PianoChord = () => {
 
   useEffect(() => {
     const newSelectedScale = scalesData.scales.find(
-      (scale) => scale.name === scalesName
+      (scale) => scale.name === scalesName,
     );
     const mode = newSelectedScale?.mode || "Major";
 
@@ -332,7 +332,7 @@ const PianoChord = () => {
     const normalized = normalizeNote(note);
     polySynth.triggerAttack(normalized);
     setActiveNotes((prev) =>
-      prev.includes(normalized) ? prev : [...prev, normalized]
+      prev.includes(normalized) ? prev : [...prev, normalized],
     );
     console.log(activeNotes);
   }
@@ -374,7 +374,7 @@ const PianoChord = () => {
         {notes.map((note) => {
           const pitch = note.slice(0, -1); // "Gb"
           const standardized = Tone.Frequency(
-            pitch == "Cb" ? pitch + "4" : pitch + "3"
+            pitch == "Cb" ? pitch + "4" : pitch + "3",
           )
             .toNote()
             .replace(/[0-9]/g, ""); // "F#"
@@ -383,7 +383,7 @@ const PianoChord = () => {
           const isBlack = note.includes("b");
           const normalized = Tone.Frequency(note).toNote(); // e.g., Gb3 → F#3
           const isActive = activeNotes.some(
-            (n) => Tone.Frequency(n).toNote() === normalized //字串上不等於，但透過辨識Frequency去達成標準化
+            (n) => Tone.Frequency(n).toNote() === normalized, //字串上不等於，但透過辨識Frequency去達成標準化
           );
 
           return (
@@ -402,7 +402,9 @@ const PianoChord = () => {
                 <PianoKeyFace black={isBlack} />
                 <KeyLabel $black={isBlack}>
                   {isBlack
-                    ? (enharmonicLabels[pitch] || pitch).split(/\s*\/\s*/).join("\n/\n")
+                    ? (enharmonicLabels[pitch] || pitch)
+                        .split(/\s*\/\s*/)
+                        .join("\n/\n")
                     : enharmonicLabels[pitch] || pitch}
                 </KeyLabel>
               </PianoKey>
@@ -435,9 +437,7 @@ const PianoChord = () => {
 
       {/* 七和弦區域 */}
       <ChordSection>
-        <ChordTitle>
-          Seventh Chords
-        </ChordTitle>
+        <ChordTitle>Seventh Chords</ChordTitle>
         <ChordList>
           {chordsInScale
             .filter((chord) => chord.type === "seventh")
