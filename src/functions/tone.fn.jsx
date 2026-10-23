@@ -13,6 +13,49 @@ import * as Tone from "tone";
 import scalesData from "./scales.json";
 import MusicStaff from "./MusicStaff";
 
+const majorRootNotes = [
+  "C",
+  "C#",
+  "Db",
+  "D",
+  "Eb",
+  "E",
+  "F",
+  "F#",
+  "Gb",
+  "G",
+  "Ab",
+  "A",
+  "Bb",
+  "B",
+  "Cb",
+];
+const minorRootNotes = [
+  "A",
+  "A#",
+  "Bb",
+  "B",
+  "C",
+  "C#",
+  "D",
+  "D#",
+  "Eb",
+  "E",
+  "F",
+  "F#",
+  "G",
+  "G#",
+  "Ab",
+];
+
+const rootNoteFallbacks = {
+  Gb: "F#",
+  Cb: "B",
+  "D#": "Eb",
+  "G#": "Ab",
+  "A#": "Bb",
+};
+
 const polySynth = new Tone.PolySynth().toDestination();
 
 export default function PianoKeyboard() {
@@ -40,48 +83,6 @@ export default function PianoKeyboard() {
     scalesData.scales.find((scale) => scale.name === scalesName) ||
     scalesData.scales[0];
 
-  const majorRootNotes = [
-    "C",
-    "C#",
-    "Db",
-    "D",
-    "Eb",
-    "E",
-    "F",
-    "F#",
-    "Gb",
-    "G",
-    "Ab",
-    "A",
-    "Bb",
-    "B",
-    "Cb",
-  ];
-  const minorRootNotes = [
-    "A",
-    "A#",
-    "Bb",
-    "B",
-    "C",
-    "C#",
-    "D",
-    "D#",
-    "Eb",
-    "E",
-    "F",
-    "F#",
-    "G",
-    "G#",
-    "Ab",
-  ];
-
-  const rootNoteFallbacks = {
-    Gb: "F#",
-    Cb: "B",
-    "D#": "Eb",
-    "G#": "Ab",
-    "A#": "Bb",
-  };
 
   useEffect(() => {
     const newSelectedScale = scalesData.scales.find(
@@ -99,7 +100,7 @@ export default function PianoKeyboard() {
         rootNoteFallbacks[rootNote] || (mode === "Major" ? "C" : "A")
       );
     }
-  }, [scalesName]);
+  }, [scalesName, rootNote]);
 
   const selectedMode = selectedScale.mode;
 

@@ -18,6 +18,218 @@ import React, { useState, useEffect, useMemo } from "react";
 import * as Tone from "tone";
 import scalesData from "./chords_scale.json";
 
+const traidChordFormulas = {
+  Major: [0, 4, 7],
+  Minor: [0, 3, 7],
+  Diminished: [0, 3, 6],
+  Augmented: [0, 4, 8],
+};
+
+const seventhChordFormulas = {
+  Major7: [0, 4, 7, 11],
+  Minor7: [0, 3, 7, 10],
+  Dominant7: [0, 4, 7, 10],
+  HalfDiminished7: [0, 3, 6, 10],
+  Diminished7: [0, 3, 6, 9],
+  Augmented7: [0, 4, 8, 10],
+  MinorMajor7: [0, 3, 7, 11],
+  AugmentedMajor7: [0, 4, 8, 11],
+};
+
+// function prefersSharps(note) {
+//   return note.includes("#");
+// }
+// function preferFlat(note) {
+//   const enharmonicMap = {
+//     "C#": "Db",
+//     "D#": "Eb",
+//     "F#": "Gb",
+//     "G#": "Ab",
+//     "A#": "Bb",
+//   };
+//   return enharmonicMap[note] || note;
+// }
+
+function generateLetterNames(rootNote) {
+  const letterOrder = ["C", "D", "E", "F", "G", "A", "B"];
+  const rootLetter = rootNote[0].toUpperCase();
+  const startIndex = letterOrder.indexOf(rootLetter);
+
+  const reordered = [];
+  for (let i = 0; i < 7; i++) {
+    reordered.push(letterOrder[(startIndex + i) % 7]);
+  }
+
+  return reordered;
+}
+
+function getEnharmonicName(midi, targetLetter) {
+  const enharmonics = Tone.Frequency(midi, "midi")
+    .toNote()
+    .replace(/[0-9]/g, "");
+
+  // Tone.js 不直接提供 enharmonic 清單，我們簡單處理常見情況：
+  const altNames = {
+    "C#": "Db",
+    Db: "C#",
+    "D#": "Eb",
+    Eb: "D#",
+    E: "Fb",
+    Fb: "E",
+    "E#": "F",
+    F: "E#",
+    "F#": "Gb",
+    Gb: "F#",
+    "G#": "Ab",
+    Ab: "G#",
+    "A#": "Bb",
+    Bb: "A#",
+    "B#": "C",
+    C: "B#",
+    B: "Cb",
+    Cb: "B",
+  };
+
+  if (enharmonics[0] === targetLetter) return enharmonics;
+  const alt = altNames[enharmonics];
+  if (alt && alt[0] === targetLetter) return alt;
+
+  // fallback
+  return enharmonics;
+}
+
+function generateChordsInScale(root, scale) {
+  if (
+    !scale ||
+    !scale.intervals ||
+    !scale.triadChords ||
+    !scale.seventhChords
+  ) {
+    console.error("Invalid scale data:", scale);
+    return [];
+  }
+
+  //root=="Cb"? root+ "4":root+ "3"
+  const baseMidi = Tone.Frequency(
+    root == "Cb" ? root + "4" : root + "3",
+  ).toMidi();
+  const chords = [];
+
+  // 🔸 Step 1: 產生音名字母順序
+  const letterNames = generateLetterNames(root);
+
+  // 🔸 Step 2: 主迴圈
+  for (let i = 0; i < scale.intervals.length; i++) {
+    const rootInterval = scale.intervals[i];
+    const midi = (baseMidi + rootInterval) % 128;
+
+    // 正確取得音名（enharmonic-aware）
+    const targetLetter = letterNames[i % 7];
+    const chordRoot = getEnharmonicName(midi, targetLetter);
+
+    // --- TRIAD ---
+    const triadType = scale.triadChords[i];
+    const triadFormula = traidChordFormulas[triadType];
+
+    const triadNotes = triadFormula.map((interval) =>
+      Tone.Frequency(root == "Cb" ? root + "4" : root + "3")
+        .transpose(rootInterval + interval)
+        .toNote(),
+    );
+
+    const triadNameSuffix =
+      {
+        Major: "",
+        Minor: "m",
+        Diminished: "°",
+        Augmented: "+",
+      }[triadType] || "";
+
+    chords.push({
+      name: `${chordRoot}${triadNameSuffix}`,
+      notes: triadNotes,
+      type: "triad",
+    });
+
+    // --- SEVENTH ---
+    const seventhType = scale.seventhChords[i];
+    const seventhFormula = seventhChordFormulas[seventhType];
+
+    const seventhNotes = seventhFormula.map((interval) =>
+      Tone.Frequency(root == "Cb" ? root + "4" : root + "3")
+        .transpose(rootInterval + interval)
+        .toNote(),
+    );
+
+    const seventhNameSuffix =
+      {
+        Major7: "Δ7",
+        Minor7: "m7",
+        Dominant7: "7",
+        HalfDiminished7: "ø7",
+        Diminished7: "°7",
+        Augmented7: "+7",
+        MinorMajor7: "mΔ7",
+        AugmentedMajor7: "+Δ7",
+      }[seventhType] || "";
+
+    chords.push({
+      name: `${chordRoot}${seventhNameSuffix}`,
+      notes: seventhNotes,
+      type: "seventh",
+    });
+  }
+
+  return chords;
+}
+
+const majorRootNotes = [
+  "C",
+  "C#",
+  "Db",
+  "D",
+  "Eb",
+  "E",
+  "F",
+  "F#",
+  "Gb",
+  "G",
+  "Ab",
+  "A",
+  "Bb",
+  "B",
+  "Cb",
+];
+
+const minorRootNotes = [
+  "A",
+  "A#",
+  "Bb",
+  "B",
+  "C",
+  "C#",
+  "D",
+  "D#",
+  "Eb",
+  "E",
+  "F",
+  "F#",
+  "G",
+  "G#",
+  "Ab",
+];
+
+// 對應表（當前 note 無法在對應 mode 下使用時，自動轉換）
+const rootNoteFallbacks = {
+  // 大調轉小調時
+  Gb: "F#",
+  Cb: "B",
+  // 小調轉大調時
+  "D#": "Eb",
+  "G#": "Ab",
+  "A#": "Bb",
+};
+
 const polySynth = new Tone.PolySynth().toDestination();
 const PianoChord = () => {
   const noteNames = [
@@ -40,52 +252,6 @@ const PianoChord = () => {
     scalesData.scales.find((scale) => scale.name === scalesName) ||
     scalesData.scales[0];
 
-  const majorRootNotes = [
-    "C",
-    "C#",
-    "Db",
-    "D",
-    "Eb",
-    "E",
-    "F",
-    "F#",
-    "Gb",
-    "G",
-    "Ab",
-    "A",
-    "Bb",
-    "B",
-    "Cb",
-  ];
-
-  const minorRootNotes = [
-    "A",
-    "A#",
-    "Bb",
-    "B",
-    "C",
-    "C#",
-    "D",
-    "D#",
-    "Eb",
-    "E",
-    "F",
-    "F#",
-    "G",
-    "G#",
-    "Ab",
-  ];
-
-  // 對應表（當前 note 無法在對應 mode 下使用時，自動轉換）
-  const rootNoteFallbacks = {
-    // 大調轉小調時
-    Gb: "F#",
-    Cb: "B",
-    // 小調轉大調時
-    "D#": "Eb",
-    "G#": "Ab",
-    "A#": "Bb",
-  };
 
   const enharmonicLabels = {
     C: "C / B#",
@@ -107,173 +273,8 @@ const PianoChord = () => {
     B: "B / C♭",
   };
 
-  const traidChordFormulas = {
-    Major: [0, 4, 7],
-    Minor: [0, 3, 7],
-    Diminished: [0, 3, 6],
-    Augmented: [0, 4, 8],
-  };
-
-  const seventhChordFormulas = {
-    Major7: [0, 4, 7, 11],
-    Minor7: [0, 3, 7, 10],
-    Dominant7: [0, 4, 7, 10],
-    HalfDiminished7: [0, 3, 6, 10],
-    Diminished7: [0, 3, 6, 9],
-    Augmented7: [0, 4, 8, 10],
-    MinorMajor7: [0, 3, 7, 11],
-    AugmentedMajor7: [0, 4, 8, 11],
-  };
-
-  // function prefersSharps(note) {
-  //   return note.includes("#");
-  // }
-  // function preferFlat(note) {
-  //   const enharmonicMap = {
-  //     "C#": "Db",
-  //     "D#": "Eb",
-  //     "F#": "Gb",
-  //     "G#": "Ab",
-  //     "A#": "Bb",
-  //   };
-  //   return enharmonicMap[note] || note;
-  // }
-
-  function generateLetterNames(rootNote) {
-    const letterOrder = ["C", "D", "E", "F", "G", "A", "B"];
-    const rootLetter = rootNote[0].toUpperCase();
-    const startIndex = letterOrder.indexOf(rootLetter);
-
-    const reordered = [];
-    for (let i = 0; i < 7; i++) {
-      reordered.push(letterOrder[(startIndex + i) % 7]);
-    }
-
-    return reordered;
-  }
-
-  function getEnharmonicName(midi, targetLetter) {
-    const enharmonics = Tone.Frequency(midi, "midi")
-      .toNote()
-      .replace(/[0-9]/g, "");
-
-    // Tone.js 不直接提供 enharmonic 清單，我們簡單處理常見情況：
-    const altNames = {
-      "C#": "Db",
-      Db: "C#",
-      "D#": "Eb",
-      Eb: "D#",
-      E: "Fb",
-      Fb: "E",
-      "E#": "F",
-      F: "E#",
-      "F#": "Gb",
-      Gb: "F#",
-      "G#": "Ab",
-      Ab: "G#",
-      "A#": "Bb",
-      Bb: "A#",
-      "B#": "C",
-      C: "B#",
-      B: "Cb",
-      Cb: "B",
-    };
-
-    if (enharmonics[0] === targetLetter) return enharmonics;
-    const alt = altNames[enharmonics];
-    if (alt && alt[0] === targetLetter) return alt;
-
-    // fallback
-    return enharmonics;
-  }
-
-  function generateChordsInScale(root, scale) {
-    if (
-      !scale ||
-      !scale.intervals ||
-      !scale.triadChords ||
-      !scale.seventhChords
-    ) {
-      console.error("Invalid scale data:", scale);
-      return [];
-    }
-
-    //root=="Cb"? root+ "4":root+ "3"
-    const baseMidi = Tone.Frequency(
-      root == "Cb" ? root + "4" : root + "3",
-    ).toMidi();
-    const chords = [];
-
-    // 🔸 Step 1: 產生音名字母順序
-    const letterNames = generateLetterNames(root);
-
-    // 🔸 Step 2: 主迴圈
-    for (let i = 0; i < scale.intervals.length; i++) {
-      const rootInterval = scale.intervals[i];
-      const midi = (baseMidi + rootInterval) % 128;
-
-      // 正確取得音名（enharmonic-aware）
-      const targetLetter = letterNames[i % 7];
-      const chordRoot = getEnharmonicName(midi, targetLetter);
-
-      // --- TRIAD ---
-      const triadType = scale.triadChords[i];
-      const triadFormula = traidChordFormulas[triadType];
-
-      const triadNotes = triadFormula.map((interval) =>
-        Tone.Frequency(root == "Cb" ? root + "4" : root + "3")
-          .transpose(rootInterval + interval)
-          .toNote(),
-      );
-
-      const triadNameSuffix =
-        {
-          Major: "",
-          Minor: "m",
-          Diminished: "°",
-          Augmented: "+",
-        }[triadType] || "";
-
-      chords.push({
-        name: `${chordRoot}${triadNameSuffix}`,
-        notes: triadNotes,
-        type: "triad",
-      });
-
-      // --- SEVENTH ---
-      const seventhType = scale.seventhChords[i];
-      const seventhFormula = seventhChordFormulas[seventhType];
-
-      const seventhNotes = seventhFormula.map((interval) =>
-        Tone.Frequency(root == "Cb" ? root + "4" : root + "3")
-          .transpose(rootInterval + interval)
-          .toNote(),
-      );
-
-      const seventhNameSuffix =
-        {
-          Major7: "Δ7",
-          Minor7: "m7",
-          Dominant7: "7",
-          HalfDiminished7: "ø7",
-          Diminished7: "°7",
-          Augmented7: "+7",
-          MinorMajor7: "mΔ7",
-          AugmentedMajor7: "+Δ7",
-        }[seventhType] || "";
-
-      chords.push({
-        name: `${chordRoot}${seventhNameSuffix}`,
-        notes: seventhNotes,
-        type: "seventh",
-      });
-    }
-
-    return chords;
-  }
-
   const chordsInScale = useMemo(() => {
-    return generateChordsInScale(rootNote, selectedScale); // ✅ 修正：傳整個 scale 物件，而不是 intervals
+    return generateChordsInScale(rootNote, selectedScale);
   }, [rootNote, selectedScale]);
 
   useEffect(() => {
@@ -295,7 +296,7 @@ const PianoChord = () => {
         setRootNote(mode === "Major" ? "C" : "A");
       }
     }
-  }, [scalesName]);
+  }, [scalesName, rootNote]);
 
   const selectedMode = selectedScale.mode; // "Major" or "Minor"
 
