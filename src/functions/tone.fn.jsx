@@ -1,3 +1,4 @@
+import KeyboardViewport from "../components/KeyboardViewport";
 import PianoKeyFace from "../components/PianoKeyFace";
 import {
   Controls,
@@ -186,39 +187,42 @@ export default function PianoKeyboard() {
       </Controls>
 
       {/* 鋼琴鍵 */}
-      <Keyboard>
-        {notes.map((note) => {
-          const pitch = note.slice(0, -1);
-          const standardized = Tone.Frequency(pitch + "4")
-            .toNote()
-            .replace(/[0-9]/g, "");
-          const isYellow = yellowNotes.includes(standardized);
-          const isBlack = note.includes("b");
+      <KeyboardViewport>
+        <Keyboard>
+          {notes.map((note) => {
+            const pitch = note.slice(0, -1);
+            const standardized = Tone.Frequency(pitch + "4")
+              .toNote()
+              .replace(/[0-9]/g, "");
+            const isYellow = yellowNotes.includes(standardized);
+            const isBlack = note.includes("b");
 
-          return (
-            <KeySlot key={note}>
-              <PianoKey
-                onMouseDown={() => startNote(note)}
-                onMouseUp={() => stopNote(note)}
-                onMouseLeave={() => stopNote(note)}
-                onTouchStart={() => startNote(note)}
-                onTouchEnd={() => stopNote(note)}
-                $black={isBlack}
-                $wrong={!isYellow}
-                $active={activeNotes.includes(note)}
-                $chords={false}
-              >
-                <PianoKeyFace black={isBlack} />
-                <KeyLabel $black={isBlack}>
-                  {isBlack
-                    ? (enharmonicLabels[pitch] || pitch).split(/\s*\/\s*/).join("\n/\n")
-                    : enharmonicLabels[pitch] || pitch}
-                </KeyLabel>
-              </PianoKey>
-            </KeySlot>
-          );
-        })}
-      </Keyboard>
+            return (
+              <KeySlot key={note} $black={isBlack} data-note={note}>
+                <PianoKey
+                  onMouseDown={() => startNote(note)}
+                  onMouseUp={() => stopNote(note)}
+                  onMouseLeave={() => stopNote(note)}
+                  onTouchStart={() => startNote(note)}
+                  onTouchEnd={() => stopNote(note)}
+                  onTouchCancel={() => stopNote(note)}
+                  $black={isBlack}
+                  $wrong={!isYellow}
+                  $active={activeNotes.includes(note)}
+                  $chords={false}
+                >
+                  <PianoKeyFace black={isBlack} />
+                  <KeyLabel $black={isBlack}>
+                    {isBlack
+                      ? (enharmonicLabels[pitch] || pitch).split(/\s*\/\s*/).join("\n/\n")
+                      : enharmonicLabels[pitch] || pitch}
+                  </KeyLabel>
+                </PianoKey>
+              </KeySlot>
+            );
+          })}
+        </Keyboard>
+      </KeyboardViewport>
 
       {/* 五線譜 */}
       <StaffPanel>

@@ -5,7 +5,8 @@ export const LearningPage = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100vw;
+  width: 100%;
+  min-width: 0;
 `;
 
 export const PageTitle = styled.h1`
@@ -30,16 +31,33 @@ export const ScaleSelect = styled.select`
   color: oklch(43.8% 0.218 303.724);
 `;
 
+export const KeyboardScrollArea = styled.div`
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-block: 24px;
+  overscroll-behavior-x: contain;
+
+  &:focus-visible {
+    outline: 2px solid #7c3aed;
+    outline-offset: -2px;
+  }
+`;
+
 export const Keyboard = styled.div`
   position: relative;
-  width: 100%;
-  height: 12rem;
   display: flex;
+  width: max-content;
+  min-width: 100%;
+  height: 192px;
   justify-content: center;
 `;
 
 export const KeySlot = styled.div`
   position: relative;
+  flex: 0 0 ${({ $black }) => ($black ? "0px" : "68px")};
+  width: ${({ $black }) => ($black ? "0px" : "68px")};
 `;
 
 const blackKeyFeedback = css`
@@ -129,7 +147,8 @@ export const PianoKey = styled.button`
 
   /* z-index 層級控制 */
   z-index: ${({ $black, $chords }) => ($black ? ($chords ? 5 : 20) : 1)};
-  margin: ${({ $black }) => ($black ? "-2.25rem" : "0")};
+  margin: 0;
+  left: ${({ $black }) => ($black ? "-24px" : "0")};
 
   width: ${({ $black }) => ($black ? "48px" : "68px")};
   height: ${({ $black }) => ($black ? "140px" : "192px")};
@@ -157,6 +176,8 @@ export const PianoKey = styled.button`
 `;
 
 export const StaffPanel = styled.div`
+  max-width: 100%;
+  overflow-x: auto;
   margin-top: 1.5rem;
   display: flex;
   justify-content: center;
@@ -164,6 +185,8 @@ export const StaffPanel = styled.div`
 `;
 
 export const ChordSection = styled.div`
+  width: 100%;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -179,6 +202,7 @@ export const ChordTitle = styled.h3`
 `;
 
 export const ChordList = styled.div`
+  max-width: 100%;
   display: flex;
   gap: 0.75rem;
   flex-wrap: wrap;

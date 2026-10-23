@@ -1,3 +1,4 @@
+import KeyboardViewport from "../components/KeyboardViewport";
 import PianoKeyFace from "../components/PianoKeyFace";
 import {
   Controls,
@@ -371,48 +372,51 @@ const PianoChord = () => {
           ))}
         </ScaleSelect>
       </Controls>
-      <Keyboard>
-        {notes.map((note) => {
-          const pitch = note.slice(0, -1); // "Gb"
-          const standardized = Tone.Frequency(
-            pitch == "Cb" ? pitch + "4" : pitch + "3",
-          )
-            .toNote()
-            .replace(/[0-9]/g, ""); // "F#"
-          const isYellow = yellowNotes.includes(standardized);
+      <KeyboardViewport>
+        <Keyboard>
+          {notes.map((note) => {
+            const pitch = note.slice(0, -1); // "Gb"
+            const standardized = Tone.Frequency(
+              pitch == "Cb" ? pitch + "4" : pitch + "3",
+            )
+              .toNote()
+              .replace(/[0-9]/g, ""); // "F#"
+            const isYellow = yellowNotes.includes(standardized);
 
-          const isBlack = note.includes("b");
-          const normalized = Tone.Frequency(note).toNote(); // e.g., Gb3 → F#3
-          const isActive = activeNotes.some(
-            (n) => Tone.Frequency(n).toNote() === normalized, //字串上不等於，但透過辨識Frequency去達成標準化
-          );
+            const isBlack = note.includes("b");
+            const normalized = Tone.Frequency(note).toNote(); // e.g., Gb3 → F#3
+            const isActive = activeNotes.some(
+              (n) => Tone.Frequency(n).toNote() === normalized, //字串上不等於，但透過辨識Frequency去達成標準化
+            );
 
-          return (
-            <KeySlot key={note}>
-              <PianoKey
-                onMouseDown={() => startNote(note)}
-                onMouseUp={() => stopNote(note)}
-                onMouseLeave={() => stopNote(note)}
-                onTouchStart={() => startNote(note)}
-                onTouchEnd={() => stopNote(note)}
-                $black={isBlack}
-                $wrong={!isYellow}
-                $active={isActive}
-                $chords={true}
-              >
-                <PianoKeyFace black={isBlack} />
-                <KeyLabel $black={isBlack}>
-                  {isBlack
-                    ? (enharmonicLabels[pitch] || pitch)
-                        .split(/\s*\/\s*/)
-                        .join("\n/\n")
-                    : enharmonicLabels[pitch] || pitch}
-                </KeyLabel>
-              </PianoKey>
-            </KeySlot>
-          );
-        })}
-      </Keyboard>
+            return (
+              <KeySlot key={note} $black={isBlack} data-note={note}>
+                <PianoKey
+                  onMouseDown={() => startNote(note)}
+                  onMouseUp={() => stopNote(note)}
+                  onMouseLeave={() => stopNote(note)}
+                  onTouchStart={() => startNote(note)}
+                  onTouchEnd={() => stopNote(note)}
+                  onTouchCancel={() => stopNote(note)}
+                  $black={isBlack}
+                  $wrong={!isYellow}
+                  $active={isActive}
+                  $chords={true}
+                >
+                  <PianoKeyFace black={isBlack} />
+                  <KeyLabel $black={isBlack}>
+                    {isBlack
+                      ? (enharmonicLabels[pitch] || pitch)
+                          .split(/\s*\/\s*/)
+                          .join("\n/\n")
+                      : enharmonicLabels[pitch] || pitch}
+                  </KeyLabel>
+                </PianoKey>
+              </KeySlot>
+            );
+          })}
+        </Keyboard>
+      </KeyboardViewport>
       {/* 三和弦區域 */}
       <ChordSection>
         <ChordTitle>Triads</ChordTitle>
