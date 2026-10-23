@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./Layout";
 import Homepage from "./pages/Homepage";
-import "./App.css";
 import Piano from "./pages/Piano";
 import Chords from "./pages/Chords";
 

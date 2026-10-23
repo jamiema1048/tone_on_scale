@@ -4,52 +4,141 @@
       "id": 1,
       "name": "Natural Major",
       "intervals": [0, 2, 4, 5, 7, 9, 11],
-      "mode": "Major"
+      "mode": "Major",
+      "description": "Ionian mode (standard major scale)"
     },
     {
       "id": 2,
       "name": "Natural Minor",
       "intervals": [0, 2, 3, 5, 7, 8, 10],
-      "mode": "Minor"
+      "mode": "Minor",
+      "description": "Aeolian mode (standard minor scale)"
     },
     {
       "id": 3,
       "name": "Harmonic Major",
-      "intervals": [0, 2, 3, 5, 8, 9, 11],
-      "mode": "Major"
+      "intervals": [0, 2, 4, 5, 8, 9, 11],
+      "mode": "Major",
+      "description": "Major scale with lowered 6th degree"
     },
     {
       "id": 4,
       "name": "Harmonic Minor",
       "intervals": [0, 2, 3, 5, 7, 8, 11],
-      "mode": "Minor"
+      "mode": "Minor",
+      "description": "Minor scale with raised 7th degree"
     },
     {
       "id": 5,
       "name": "Melodic Minor",
       "intervals": [0, 2, 3, 5, 7, 9, 11],
-      "mode": "Minor"
+      "mode": "Minor",
+      "description": "Jazz minor (ascending melodic minor)"
     },
     {
       "id": 6,
       "name": "Blues Major",
       "intervals": [0, 2, 3, 4, 7, 9],
       "mode": "Major",
-      "description": "Jazz major mode"
+      "description": "Major blues scale"
     },
     {
       "id": 7,
       "name": "Blues Minor",
       "intervals": [0, 3, 5, 6, 7, 10],
       "mode": "Minor",
-      "description": "Jazz minor mode"
+      "description": "Minor blues scale"
     },
     {
       "id": 8,
       "name": "Dorian Minor",
       "intervals": [0, 2, 3, 5, 7, 9, 10],
       "mode": "Minor",
-      "description": "Jazz minor mode"
+      "description": "Jazz minor mode (bright minor sound)"
+    },
+    {
+      "id": 9,
+      "name": "Lydian Major",
+      "intervals": [0, 2, 4, 6, 7, 9, 11],
+      "mode": "Major",
+      "description": "Major scale with raised 4th degree"
+    },
+    {
+      "id": 10,
+      "name": "Lydian Dominant",
+      "intervals": [0, 2, 4, 6, 7, 9, 10],
+      "mode": "Major",
+      "description": "Mixolydian mode with raised 4th, used in jazz fusion"
+    },
+    {
+      "id": 11,
+      "name": "Mixolydian",
+      "intervals": [0, 2, 4, 5, 7, 9, 10],
+      "mode": "Major",
+      "description": "Dominant mode, common in rock, blues, and funk"
+    },
+    {
+      "id": 12,
+      "name": "Phrygian Dominant",
+      "intervals": [0, 1, 4, 5, 7, 8, 10],
+      "mode": "Major",
+      "description": "Spanish / Flamenco scale (5th mode of harmonic minor)"
+    },
+    {
+      "id": 13,
+      "name": "Spanish Gypsy",
+      "intervals": [0, 1, 4, 5, 7, 8, 10],
+      "mode": "Major",
+      "description": "Same as Phrygian Dominant, used in Flamenco music"
+    },
+    {
+      "id": 14,
+      "name": "Arabic Scale",
+      "intervals": [0, 2, 4, 5, 6, 8, 10],
+      "mode": "Minor",
+      "description": "Arabic / Middle Eastern flavor scale"
+    },
+    {
+      "id": 15,
+      "name": "Persian Scale",
+      "intervals": [0, 1, 4, 5, 6, 8, 11],
+      "mode": "Minor",
+      "description": "Middle Eastern exotic scale with half steps and augmented seconds"
+    },
+    {
+      "id": 16,
+      "name": "Hungarian Minor",
+      "intervals": [0, 2, 3, 6, 7, 8, 11],
+      "mode": "Minor",
+      "description": "Used in Eastern European and Romani music, dramatic and exotic"
+    },
+    {
+      "id": 17,
+      "name": "Russian Scale",
+      "intervals": [0, 2, 4, 5, 7, 9, 10],
+      "mode": "Major",
+      "description": "Also called Russian gypsy scale, similar to mixolydian with minor 6th"
+    },
+    {
+      "id": 18,
+      "name": "Neapolitan Minor",
+      "intervals": [0, 1, 3, 5, 7, 8, 11],
+      "mode": "Minor",
+      "description": "Used in classical and film music, dark and dramatic"
+    },
+    {
+      "id": 19,
+      "name": "Neapolitan Major",
+      "intervals": [0, 1, 3, 5, 7, 9, 11],
+      "mode": "Major",
+      "description": "Major version of Neapolitan, rare but colorful"
+    },
+    {
+      "id": 20,
+      "name": "Mixolydian ♭6",
+      "intervals": [0, 2, 4, 5, 7, 8, 10],
+      "mode": "Major",
+      "description": "Latin jazz and fusion mode"
     }
   ]
 }

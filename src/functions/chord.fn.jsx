@@ -1,3 +1,17 @@
+import PianoKeyFace from "../components/PianoKeyFace";
+import {
+  Controls,
+  ScaleSelect,
+  Keyboard,
+  KeySlot,
+  PianoKey,
+  KeyLabel,
+  ChordSection,
+  ChordTitle,
+  ChordList,
+  ChordButton,
+  Divider,
+} from "../styles/MusicStyles";
 import React, { useState, useEffect, useMemo } from "react";
 import * as Tone from "tone";
 import scalesData from "./chords_scale.json";
@@ -332,31 +346,29 @@ const PianoChord = () => {
 
   return (
     <>
-      <div className="mb-9">
-        <select
+      <Controls>
+        <ScaleSelect
           value={rootNote}
           onChange={(e) => setRootNote(e.target.value)}
-          className="mb-4 p-2 border rounded bg-yellow-400 text-purple-800"
         >
           {rootNoteOptions.map((note) => (
             <option key={note} value={note}>
               {note}
             </option>
           ))}
-        </select>
-        <select
+        </ScaleSelect>
+        <ScaleSelect
           value={scalesName}
           onChange={(e) => setScalesName(e.target.value)}
-          className="mb-4 p-2 border rounded bg-yellow-400 text-purple-800"
         >
           {scalesData.scales.map((scale) => (
             <option key={scale.id} value={scale.name}>
               {scale.name}
             </option>
           ))}
-        </select>
-      </div>
-      <div className="relative w-full h-48 flex justify-center border border-solid border-red-400">
+        </ScaleSelect>
+      </Controls>
+      <Keyboard>
         {notes.map((note) => {
           const pitch = note.slice(0, -1); // "Gb"
           const standardized = Tone.Frequency(
@@ -373,82 +385,75 @@ const PianoChord = () => {
           );
 
           return (
-            <div key={note} className="relative">
-              <button
+            <KeySlot key={note}>
+              <PianoKey
                 onMouseDown={() => startNote(note)}
                 onMouseUp={() => stopNote(note)}
                 onMouseLeave={() => stopNote(note)}
                 onTouchStart={() => startNote(note)}
                 onTouchEnd={() => stopNote(note)}
-                className={`border border-solid flex flex-col-reverse items-center relative transition-all duration-100
-            ${
-              isBlack
-                ? `black-key w-12 h-28 ${
-                    isYellow
-                      ? "bg-yellow-300 text-purple-800"
-                      : "wrong bg-red-500 text-purple-800"
-                  } z-5 -m-9`
-                : `white-key w-17 h-48 ${
-                    isYellow
-                      ? "bg-yellow-300 text-purple-800"
-                      : "wrong bg-red-300 text-purple-800"
-                  } z-1`
-            }
-            ${isActive ? "active" : ""}`}
+                $black={isBlack}
+                $wrong={!isYellow}
+                $active={isActive}
+                $chords={true}
               >
-                {enharmonicLabels[pitch] || pitch}
-              </button>
-            </div>
+                <PianoKeyFace black={isBlack} />
+                <KeyLabel $black={isBlack}>
+                  {isBlack
+                    ? (enharmonicLabels[pitch] || pitch).split(/\s*\/\s*/).join("\n/\n")
+                    : enharmonicLabels[pitch] || pitch}
+                </KeyLabel>
+              </PianoKey>
+            </KeySlot>
           );
         })}
-      </div>
+      </Keyboard>
       {/* 三和弦區域 */}
-      <div className="flex flex-col items-center mb-6">
-        <h3 className="mb-3 text-xl font-bold text-purple-700">Triads</h3>
-        <div className="flex gap-3 flex-wrap justify-center">
+      <ChordSection>
+        <ChordTitle>Triads</ChordTitle>
+        <ChordList>
           {chordsInScale
             .filter((chord) => chord.type === "triad")
             .map((chord, idx) => (
-              <button
+              <ChordButton
                 key={`triad-${idx}`}
                 onMouseDown={() => chord.notes.forEach(startNote)}
                 onMouseUp={() => chord.notes.forEach(stopNote)}
                 onMouseLeave={() => chord.notes.forEach(stopNote)}
                 onTouchStart={() => chord.notes.forEach(startNote)}
                 onTouchEnd={() => chord.notes.forEach(stopNote)}
-                className="chord-btn px-3 py-2 rounded shadow hover:bg-purple-400"
               >
                 {chord.name}
-              </button>
+              </ChordButton>
             ))}
-        </div>
-      </div>
-      <div className="w-full border-t border-yellow-500 my-4" />
+        </ChordList>
+      </ChordSection>
+      <Divider />
 
       {/* 七和弦區域 */}
-      <div className="flex flex-col items-center mb-6">
-        <h3 className="mb-3 text-xl font-bold text-purple-700">
+      <ChordSection>
+        <ChordTitle>
           Seventh Chords
-        </h3>
-        <div className="flex gap-3 flex-wrap justify-center">
+        </ChordTitle>
+        <ChordList>
           {chordsInScale
             .filter((chord) => chord.type === "seventh")
             .map((chord, idx) => (
-              <button
+              <ChordButton
                 key={`seventh-${idx}`}
                 onMouseDown={() => chord.notes.forEach(startNote)}
                 onMouseUp={() => chord.notes.forEach(stopNote)}
                 onMouseLeave={() => chord.notes.forEach(stopNote)}
                 onTouchStart={() => chord.notes.forEach(startNote)}
                 onTouchEnd={() => chord.notes.forEach(stopNote)}
-                className="chord-btn px-3 py-2 rounded shadow hover:bg-purple-400"
               >
                 {chord.name}
-              </button>
+              </ChordButton>
             ))}
-        </div>
-      </div>
+        </ChordList>
+      </ChordSection>
     </>
   );
 };
 export default PianoChord;
+
