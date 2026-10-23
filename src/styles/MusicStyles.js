@@ -42,12 +42,6 @@ export const KeySlot = styled.div`
   position: relative;
 `;
 
-const pressedKey = css`
-  background-color: oklch(90.5% 0.182 98.111);
-  color: oklch(55.8% 0.288 302.321);
-  transform: scale(0.95);
-`;
-
 const blackKeyFeedback = css`
   --key-face-width: 46px;
   --key-face-height: 132.99px;
@@ -191,15 +185,69 @@ export const ChordList = styled.div`
   justify-content: center;
 `;
 
+// Keep the hit area fixed so pressing a chord does not move adjacent buttons.
 export const ChordButton = styled.button`
-  background-color: oklch(97.3% 0.071 103.193);
-  color: oklch(54.6% 0.245 262.881);
-  box-shadow:
-    0 1px 3px 0 rgb(0 0 0 / 0.1),
-    0 1px 2px -1px rgb(0 0 0 / 0.1);
-  &:active {
-    ${pressedKey}
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 96px;
+  height: 60px;
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #2563eb;
+  font-family: "Inter", sans-serif;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  text-align: center;
+
+  &::before {
+    content: "";
+    position: absolute;
+    width: 96px;
+    height: 60px;
+    border-radius: 10px;
+    background: linear-gradient(111deg, #ded99c 0%, #dad170 100%);
+    box-shadow: -7px -5px 4px 0 rgba(95, 100, 63, 0.25) inset;
+    pointer-events: none;
   }
+
+  &:active {
+    color: #9333ea;
+  }
+
+  &:active::before {
+    width: 92px;
+    height: 57px;
+    background: linear-gradient(111deg, #fde047 0%, #dcbf28 100%);
+    box-shadow: -4px -2px 4px 0 rgba(95, 100, 63, 0.25) inset;
+  }
+
+  &:active > [data-chord-face] {
+    width: 87px;
+  }
+`;
+
+export const ChordButtonFace = styled.span.attrs({
+  "data-chord-face": true,
+  "aria-hidden": true,
+})`
+  position: absolute;
+  width: 89px;
+  height: 55px;
+  border-radius: 10px 0 0 0;
+  pointer-events: none;
+`;
+
+export const ChordButtonLabel = styled.span`
+  position: relative;
+  white-space: nowrap;
+  pointer-events: none;
 `;
 
 export const Divider = styled.div`

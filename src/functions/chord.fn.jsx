@@ -10,6 +10,8 @@ import {
   ChordTitle,
   ChordList,
   ChordButton,
+  ChordButtonFace,
+  ChordButtonLabel,
   Divider,
 } from "../styles/MusicStyles";
 import React, { useState, useEffect, useMemo } from "react";
@@ -423,7 +425,8 @@ const PianoChord = () => {
                 onTouchStart={() => chord.notes.forEach(startNote)}
                 onTouchEnd={() => chord.notes.forEach(stopNote)}
               >
-                {chord.name}
+                <ChordButtonFace />
+                <ChordButtonLabel>{chord.name}</ChordButtonLabel>
               </ChordButton>
             ))}
         </ChordList>
@@ -447,7 +450,8 @@ const PianoChord = () => {
                 onTouchStart={() => chord.notes.forEach(startNote)}
                 onTouchEnd={() => chord.notes.forEach(stopNote)}
               >
-                {chord.name}
+                <ChordButtonFace />
+                <ChordButtonLabel>{chord.name}</ChordButtonLabel>
               </ChordButton>
             ))}
         </ChordList>
@@ -456,4 +460,3 @@ const PianoChord = () => {
   );
 };
 export default PianoChord;
-
